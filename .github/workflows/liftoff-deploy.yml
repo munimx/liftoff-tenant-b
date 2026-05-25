@@ -24,15 +24,18 @@ jobs:
         run: |
           docker build \
             -f Dockerfile \
-            -t registry.digitalocean.com/liftoff-4b51b3944a/mohdzez/prod:$IMAGE_TAG \
+            -t registry.digitalocean.com/liftoff-2a1c5c9e7b/testnewui/production:$IMAGE_TAG \
             .
-          docker push registry.digitalocean.com/liftoff-4b51b3944a/mohdzez/prod:$IMAGE_TAG
+          docker push registry.digitalocean.com/liftoff-2a1c5c9e7b/testnewui/production:$IMAGE_TAG
 
       - name: Notify Liftoff
+        if: always()
         env:
           IMAGE_TAG: ${{ github.sha }}
+          JOB_STATUS: ${{ job.status }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          curl -X POST https://ac60-39-49-161-42.ngrok-free.app/api/v1/webhooks/deploy-complete \
+          curl -X POST https://aniya-preservable-harriett.ngrok-free.dev/api/v1/webhooks/deploy-complete \
             -H "X-Liftoff-Secret: ${{ secrets.LIFTOFF_DEPLOY_SECRET }}" \
             -H "Content-Type: application/json" \
-            -d "{\"environmentId\":\"cmo20kklz0040ckvnrbxvfbgy\",\"imageUri\":\"registry.digitalocean.com/liftoff-4b51b3944a/mohdzez/prod:$IMAGE_TAG\",\"commitSha\":\"$GITHUB_SHA\"}"
+            -d "{\"environmentId\":\"cmplizosm0007szjpjefw5ofy\",\"imageUri\":\"registry.digitalocean.com/liftoff-2a1c5c9e7b/testnewui/production:$IMAGE_TAG\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\"}"
